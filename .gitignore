@@ -1,3 +1,8 @@
 zed-rs232.cache/*
 zed-rs232.runs/*
 zed-rs232.sdk/SDK.log
+vivado.jou
+vivado.log
+vivado_pid*.str
+zed-rs232.sdk/.metadata/*
+
