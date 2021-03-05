@@ -111,6 +111,7 @@ module design_1_processing_system7_0_0 (
   M_AXI_GP0_BRESP,
   M_AXI_GP0_RRESP,
   M_AXI_GP0_RDATA,
+  IRQ_P2F_UART0,
   FCLK_CLK0,
   FCLK_RESET0_N,
   MIO,
@@ -242,6 +243,9 @@ input wire [1 : 0] M_AXI_GP0_RRESP;
 ADS 4, NUM_WRITE_THREADS 4, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 M_AXI_GP0 RDATA" *)
 input wire [31 : 0] M_AXI_GP0_RDATA;
+(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME IRQ_P2F_UART0, SENSITIVITY LEVEL_HIGH, PortWidth 1" *)
+(* X_INTERFACE_INFO = "xilinx.com:signal:interrupt:1.0 IRQ_P2F_UART0 INTERRUPT" *)
+output wire IRQ_P2F_UART0;
 (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME FCLK_CLK0, FREQ_HZ 100000000, PHASE 0.000, CLK_DOMAIN design_1_processing_system7_0_0_FCLK_CLK0, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 FCLK_CLK0 CLK" *)
 output wire FCLK_CLK0;
@@ -915,7 +919,7 @@ inout wire PS_PORB;
     .IRQ_P2F_SDIO0(),
     .IRQ_P2F_I2C0(),
     .IRQ_P2F_SPI0(),
-    .IRQ_P2F_UART0(),
+    .IRQ_P2F_UART0(IRQ_P2F_UART0),
     .IRQ_P2F_CAN0(),
     .IRQ_P2F_USB1(),
     .IRQ_P2F_ENET1(),

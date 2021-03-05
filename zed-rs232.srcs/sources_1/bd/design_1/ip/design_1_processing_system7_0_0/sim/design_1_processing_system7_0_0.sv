@@ -730,6 +730,7 @@
   M_AXI_GP0_BRESP,
   M_AXI_GP0_RRESP,
   M_AXI_GP0_RDATA,
+  IRQ_P2F_UART0,
   FCLK_CLK0,
   FCLK_RESET0_N,
   MIO,
@@ -869,6 +870,7 @@
       input  [1 : 0] M_AXI_GP0_BRESP;
       input  [1 : 0] M_AXI_GP0_RRESP;
       input  [31 : 0] M_AXI_GP0_RDATA;
+      output  IRQ_P2F_UART0;
       output  FCLK_CLK0;
       output  FCLK_RESET0_N;
       inout  [53 : 0] MIO;
@@ -930,6 +932,7 @@
       reg [3 : 0] M_AXI_GP0_AWLEN;
       reg [3 : 0] M_AXI_GP0_AWQOS;
       reg [3 : 0] M_AXI_GP0_WSTRB;
+      reg IRQ_P2F_UART0;
       reg FCLK_CLK0;
       reg FCLK_RESET0_N;
       string ip_name;
