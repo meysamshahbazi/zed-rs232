@@ -92,7 +92,7 @@
  * The following constant controls the length of the buffers to be sent
  * and received with the UART,
  */
-#define TEST_BUFFER_SIZE	100
+#define TEST_BUFFER_SIZE	10
 
 
 /**************************** Type Definitions ******************************/
@@ -123,6 +123,7 @@ INTC InterruptController;	/* Instance of the Interrupt Controller */
 static u8 SendBuffer[TEST_BUFFER_SIZE];	/* Buffer for Transmitting Data */
 static u8 RecvBuffer[TEST_BUFFER_SIZE];	/* Buffer for Receiving Data */
 
+//SendBuffer = "Hello stm from zynq\r\n";
 /*
  * The following counters are used to determine when the entire buffer has
  * been sent and received.
@@ -275,12 +276,17 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 	 * the receive buffer bytes to zero to allow the receive data to be
 	 * verified
 	 */
-	for (Index = 0; Index < TEST_BUFFER_SIZE; Index++) {
+
+	for (Index = 0; Index < TEST_BUFFER_SIZE-2; Index++) {
 
 		SendBuffer[Index] = (Index % 26) + 'A';
 
 		RecvBuffer[Index] = 0;
 	}
+
+	SendBuffer[TEST_BUFFER_SIZE-2] = '\r';
+	SendBuffer[TEST_BUFFER_SIZE-1] = '\n';
+
 
 	/*
 	 * Start receiving data before sending it since there is a loopback,
@@ -289,7 +295,7 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 	 */
 	XUartPs_Send(UartInstPtr, SendBuffer, TEST_BUFFER_SIZE);
 
-	XUartPs_Recv(UartInstPtr, RecvBuffer, TEST_BUFFER_SIZE);
+	//XUartPs_Recv(UartInstPtr, RecvBuffer, TEST_BUFFER_SIZE);
 
 	/*
 	 * Send the buffer using the UART and ignore the number of bytes sent
@@ -301,31 +307,39 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 	 * processing work in the background, this function may get locked
 	 * up in this loop if the interrupts are not working correctly.
 	 */
+	/*
 	while (1) {
 		if ((TotalSentCount == TEST_BUFFER_SIZE) &&
 		    (TotalReceivedCount == TEST_BUFFER_SIZE)) {
 			break;
 		}
-	}
+	}*/
 
 	/* Verify the entire receive buffer was successfully received */
+	/*
 	for (Index = 0; Index < TEST_BUFFER_SIZE; Index++) {
 		if (RecvBuffer[Index] != SendBuffer[Index]) {
 			BadByteCount++;
 		}
 	}
 
-
+*/
 
 	/* Set the UART in Normal Mode */
 	XUartPs_SetOperMode(UartInstPtr, XUARTPS_OPER_MODE_NORMAL);
 
 
 	/* If any bytes were not correct, return an error */
+	/*
 	if (BadByteCount != 0) {
 		return XST_FAILURE;
 	}
+*/
 
+	/*while(1){
+		XUartPs_Send(UartInstPtr, SendBuffer, TEST_BUFFER_SIZE);
+	}
+	*/
 	return XST_SUCCESS;
 }
 
