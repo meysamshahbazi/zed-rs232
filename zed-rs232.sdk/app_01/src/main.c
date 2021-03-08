@@ -90,7 +90,7 @@
 #endif
 /*
  * The following constant controls the length of the buffers to be sent
- * and received with the UART,
+ * and received with the UARTz.,
  */
 #define TEST_BUFFER_SIZE	3
 
@@ -307,7 +307,7 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 	 */
 	//XUartPs_Send(UartInstPtr, SendBuffer, TEST_BUFFER_SIZE);
 
-	XUartPs_Recv(UartInstPtr, RecvBuffer, TEST_BUFFER_SIZE);
+	//XUartPs_Recv(UartInstPtr, RecvBuffer, TEST_BUFFER_SIZE);
 
 	/*
 	 * Send the buffer using the UART and ignore the number of bytes sent
@@ -348,7 +348,7 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 */
 	xil_printf("im here\r\n");
 	u8 ii = 0;
-	while(1);/*{
+	while(1){
 		sleep(1);
 		ii++;
 		SendBuffer[0] = ii+2;
@@ -364,7 +364,7 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 			}
 		}
 	}
-*/
+
 
 	return XST_SUCCESS;
 }
@@ -401,10 +401,10 @@ void Handler(void *CallBackRef, u32 Event, unsigned int EventData)
 	/* All of the data has been received */
 	if (Event == XUARTPS_EVENT_RECV_DATA) {
 		//xil_printf((char8* )RecvBuffer);
-		xil_printf("RX: %02x,%02x,%02x\r\n",(u8 )RecvBuffer[0],(u8 )RecvBuffer[1],(u8 )RecvBuffer[2]);
+		//xil_printf("RX: %02x,%02x,%02x\r\n",(u8 )RecvBuffer[0],(u8 )RecvBuffer[1],(u8 )RecvBuffer[2]);
 		TotalReceivedCount = EventData;
 		//xil_printf("%d",TotalReceivedCount);
-		XUartPs_Recv(&UartPs, RecvBuffer, TEST_BUFFER_SIZE);
+		//XUartPs_Recv(&UartPs, RecvBuffer, TEST_BUFFER_SIZE);
 
 	}
 
