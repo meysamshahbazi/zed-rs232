@@ -92,7 +92,7 @@
  * The following constant controls the length of the buffers to be sent
  * and received with the UART,
  */
-#define TEST_BUFFER_SIZE	11
+#define TEST_BUFFER_SIZE	10
 
 
 /**************************** Type Definitions ******************************/
@@ -201,7 +201,7 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 
 	if (XGetPlatform_Info() == XPLAT_ZYNQ_ULTRA_MP) {
 #ifdef XPAR_XUARTPS_1_DEVICE_ID
-		DeviceId = XPAR_XUARTPS_1_DEVICE_ID;
+		DeviceId = XPAR_XUARTPS_0_DEVICE_ID;
 #endif
 	}
 
@@ -213,18 +213,25 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 	if (NULL == Config) {
 		return XST_FAILURE;
 	}
+	xil_printf("clk:%d\r\n",Config->InputClockHz);
+	xil_printf("ModemPinsConnected:%d\r\n",Config->ModemPinsConnected);
 
+	Config->ModemPinsConnected = 0;
+	UartInstPtr->BaudRate = 9600;
 	Status = XUartPs_CfgInitialize(UartInstPtr, Config, Config->BaseAddress);
+	Status = XUartPs_SetBaudRate(UartInstPtr, 9600);
+
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
 	/* Check hardware build */
+	/*
 	Status = XUartPs_SelfTest(UartInstPtr);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
-
+*/
 	/*
 	 * Connect the UART to the interrupt subsystem such that interrupts
 	 * can occur. This function is application specific.
@@ -268,7 +275,7 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 	 * Increase the time out value if baud rate is high, decrease it if
 	 * baud rate is low.
 	 */
-	XUartPs_SetRecvTimeout(UartInstPtr, 8);
+	XUartPs_SetRecvTimeout(UartInstPtr, 10);
 
 
 	/*
@@ -276,7 +283,7 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 	 * the receive buffer bytes to zero to allow the receive data to be
 	 * verified
 	 */
-
+/*
 	for (Index = 0; Index < TEST_BUFFER_SIZE-2; Index++) {
 
 		SendBuffer[Index] = (Index % 26) + 'A';
@@ -287,15 +294,20 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 	SendBuffer[TEST_BUFFER_SIZE-2] = '\r';
 	SendBuffer[TEST_BUFFER_SIZE-1] = '\n';
 
+*/
+
+
+	//xil_printf("%x,%x,%x\r\n",SendBuffer[0],SendBuffer[1],SendBuffer[2]);
+	xil_printf("br: %d\r\n",UartInstPtr->BaudRate);
 
 	/*
 	 * Start receiving data before sending it since there is a loopback,
 	 * ignoring the number of bytes received as the return value since we
 	 * know it will be zero
 	 */
-	XUartPs_Send(UartInstPtr, SendBuffer, TEST_BUFFER_SIZE);
+	//XUartPs_Send(UartInstPtr, SendBuffer, TEST_BUFFER_SIZE);
 
-	//XUartPs_Recv(UartInstPtr, RecvBuffer, TEST_BUFFER_SIZE);
+	XUartPs_Recv(UartInstPtr, RecvBuffer, TEST_BUFFER_SIZE);
 
 	/*
 	 * Send the buffer using the UART and ignore the number of bytes sent
@@ -307,12 +319,12 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 	 * processing work in the background, this function may get locked
 	 * up in this loop if the interrupts are not working correctly.
 	 */
-
+/*
 	while (1) {
 		if ((TotalSentCount == TEST_BUFFER_SIZE) ) {
 			break;
 		}
-	}
+	}*/
 
 	/* Verify the entire receive buffer was successfully received */
 	/*
@@ -334,9 +346,17 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 		return XST_FAILURE;
 	}
 */
-
+	xil_printf("im here\r\n");
+	u8 ii = 0;
 	while(1){
 		sleep(1);
+		ii++;
+		SendBuffer[0] = ii+2;
+		SendBuffer[1] = ii+1;
+		SendBuffer[2] = ii;
+
+		xil_printf("TX: %02x,%02x,%02x\r\n",SendBuffer[0],SendBuffer[1],SendBuffer[2]);
+
 		XUartPs_Send(UartInstPtr, SendBuffer, TEST_BUFFER_SIZE);
 		while (1) {
 			if ((TotalSentCount == TEST_BUFFER_SIZE) ) {
@@ -344,6 +364,7 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 			}
 		}
 	}
+
 
 	return XST_SUCCESS;
 }
@@ -372,14 +393,19 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 void Handler(void *CallBackRef, u32 Event, unsigned int EventData)
 {
 	/* All of the data has been sent */
+	//xil_printf((char8* )RecvBuffer);
 	if (Event == XUARTPS_EVENT_SENT_DATA) {
 		TotalSentCount = EventData;
 	}
 
 	/* All of the data has been received */
 	if (Event == XUARTPS_EVENT_RECV_DATA) {
-		xil_printf((char8* )RecvBuffer);
+		//xil_printf((char8* )RecvBuffer);
+		xil_printf("RX: %02x,%02x,%02x\r\n",(u8 )RecvBuffer[0],(u8 )RecvBuffer[1],(u8 )RecvBuffer[2]);
 		TotalReceivedCount = EventData;
+		//xil_printf("%d",TotalReceivedCount);
+		XUartPs_Recv(&UartPs, RecvBuffer, TEST_BUFFER_SIZE);
+
 	}
 
 	/*
@@ -388,6 +414,7 @@ void Handler(void *CallBackRef, u32 Event, unsigned int EventData)
 	 */
 	if (Event == XUARTPS_EVENT_RECV_TOUT) {
 		TotalReceivedCount = EventData;
+
 	}
 
 	/*
