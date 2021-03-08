@@ -92,7 +92,7 @@
  * The following constant controls the length of the buffers to be sent
  * and received with the UART,
  */
-#define TEST_BUFFER_SIZE	10
+#define TEST_BUFFER_SIZE	3
 
 
 /**************************** Type Definitions ******************************/
@@ -348,7 +348,7 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 */
 	xil_printf("im here\r\n");
 	u8 ii = 0;
-	while(1){
+	while(1);/*{
 		sleep(1);
 		ii++;
 		SendBuffer[0] = ii+2;
@@ -364,7 +364,7 @@ int UartPsIntrExample(INTC *IntcInstPtr, XUartPs *UartInstPtr,
 			}
 		}
 	}
-
+*/
 
 	return XST_SUCCESS;
 }
